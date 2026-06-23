@@ -1,0 +1,20 @@
+# Secrets
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Qdrant local storage (если запускается без Docker-тома)
+qdrant_storage/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.log

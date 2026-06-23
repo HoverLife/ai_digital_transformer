@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-ассистент цифровой трансформации</title>
+  <style>
+    :root{
+      --bg:#eef2f7; --panel:#ffffff; --ink:#0f2540; --text:#28415c; --muted:#647688;
+      --line:#dce3ec; --line2:#e9eef4; --brand:#1d4ed8; --brand-dark:#15307a;
+      --good:#067a5b; --good-bg:#e7f6f0; --warn:#b4640a; --warn-bg:#fbf1e3;
+      --bad:#c2331f; --bad-bg:#fbeae6; --chip:#eef3fb;
+      --shadow:0 1px 2px rgba(15,37,64,.06), 0 10px 26px rgba(15,37,64,.06);
+    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+
+    header{background:var(--panel);border-bottom:1px solid var(--line)}
+    .hwrap{max-width:1000px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px}
+    .brand h1{margin:0;font-size:1.06rem;color:var(--ink);letter-spacing:.2px}
+    .brand p{margin:1px 0 0;font-size:.8rem;color:var(--muted)}
+    .stackpills{display:flex;gap:6px;flex-wrap:wrap}
+    .pill{font-size:.72rem;font-weight:600;color:var(--brand-dark);background:var(--chip);border:1px solid #d4e0f5;padding:4px 10px;border-radius:999px}
+
+    main{max-width:1000px;margin:0 auto;padding:26px 20px 70px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:22px;margin-bottom:18px}
+    #out .panel{animation:rise .4s ease both}
+    #out .panel:nth-child(2){animation-delay:.05s}
+    #out .panel:nth-child(3){animation-delay:.10s}
+    #out .panel:nth-child(4){animation-delay:.15s}
+    #out .panel:nth-child(5){animation-delay:.20s}
+    #out .panel:nth-child(6){animation-delay:.25s}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .panel-title{display:flex;align-items:center;gap:9px;font-size:.78rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+
+    label{display:block;font-size:.84rem;font-weight:600;color:var(--ink);margin:12px 0 5px}
+    input,textarea{width:100%;background:#fbfcfe;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-size:.95rem;font-family:inherit;transition:border-color .15s, box-shadow .15s}
+    input:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(29,78,216,.12)}
+    textarea{min-height:96px;resize:vertical}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+    button.cta{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:12px 26px;font-weight:600;font-size:.95rem;cursor:pointer;transition:background .15s}
+    button.cta:hover{background:var(--brand-dark)} button.cta:disabled{opacity:.55;cursor:default}
+
+    .examples{margin-top:14px}
+    .examples .lbl{font-size:.78rem;color:var(--muted);margin-bottom:7px}
+    .chips{display:flex;gap:7px;flex-wrap:wrap}
+    .chip{cursor:pointer;font-size:.78rem;color:var(--ink);background:#fff;border:1px solid var(--line);padding:6px 11px;border-radius:999px;transition:all .15s}
+    .chip:hover{border-color:var(--brand);background:var(--chip)}
+    .chip b{color:var(--brand-dark);font-weight:600} .chip span{color:var(--muted)}
+
+    /* Dossier */
+    .dossier h2{margin:0;color:var(--ink);font-size:1.4rem}
+    .dossier .meta{color:var(--muted);font-size:.85rem;margin:5px 0 0}
+    .tagrow{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+    .desc{margin:14px 0 0;color:var(--text)}
+    .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:16px 0 4px}
+    .fact{background:#fbfcfe;border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+    .fk{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+    .fv{font-size:.9rem;color:var(--ink);font-weight:600;margin-top:2px}
+    .block{margin-top:14px}
+    .tags{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{font-size:.76rem;color:var(--brand-dark);background:var(--chip);border:1px solid #d9e3f6;padding:3px 10px;border-radius:6px}
+    .tag.brand{font-weight:600} .tag.alt{color:var(--text);background:#f3f6fb;border-color:var(--line)}
+    .sources{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+    .sources .lbl,.sec-h{font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .sec-h{margin:0 0 7px} .muted{color:var(--muted)}
+    .src{font-size:.78rem;color:var(--text);background:#fff;border:1px solid var(--line);padding:4px 9px;border-radius:6px;display:inline-block;margin:0 5px 5px 0}
+
+    /* Lists with semantic colors */
+    ul.clean{list-style:none;margin:6px 0;padding:0}
+    ul.clean li{position:relative;padding:7px 0 7px 24px;border-bottom:1px solid var(--line2)}
+    ul.clean li:last-child{border-bottom:none}
+    ul.clean li::before{content:"";position:absolute;left:5px;top:14px;width:7px;height:7px;border-radius:2px;background:var(--brand)}
+    ul.pain li::before{background:var(--warn)}
+    ul.good li::before{background:var(--good)} ul.bad li::before{background:var(--bad)}
+    ol.steps{margin:6px 0;padding-left:20px} ol.steps li{margin:4px 0}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+    @media (max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+    .subcard{background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:14px}
+    .subcard.g{background:var(--good-bg);border-color:#cdeadd} .subcard.b{background:var(--bad-bg);border-color:#f1d5cd}
+
+    /* Projects */
+    .project{display:flex;gap:14px;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px;background:#fbfcfe}
+    .pnum{flex:0 0 28px;height:28px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;display:grid;place-items:center;font-size:.9rem}
+    .pbody{flex:1;min-width:0}
+    .proj-title{font-weight:700;color:var(--ink);font-size:1.02rem}
+    .closes{display:inline-block;font-size:.76rem;color:var(--brand-dark);background:var(--chip);border:1px solid #d9e3f6;padding:3px 9px;border-radius:6px;margin-top:8px}
+    .effect{margin-top:12px;background:var(--good-bg);border:1px solid #cdeadd;border-radius:8px;padding:9px 12px;font-size:.9rem;color:#0c4a3a}
+    .effect b{color:var(--good)}
+
+    /* Verdict banner */
+    .verdict{border-radius:12px;padding:16px 18px;border:1px solid var(--line);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+    .verdict.good{background:var(--good-bg);border-color:#bfe6d6}
+    .verdict.warn{background:var(--warn-bg);border-color:#f0dcbf}
+    .verdict.bad{background:var(--bad-bg);border-color:#f1cbc2}
+    .vbadge{font-size:.92rem;font-weight:700;padding:7px 14px;border-radius:8px;color:#fff;white-space:nowrap}
+    .good .vbadge{background:var(--good)} .warn .vbadge{background:var(--warn)} .bad .vbadge{background:var(--bad)}
+    .vscore{font-size:1.6rem;font-weight:800;color:var(--ink);line-height:1}
+    .vscore small{font-size:.9rem;font-weight:600;color:var(--muted)}
+    .vbar{flex:1;min-width:150px}
+    .vbar .track{height:9px;background:#fff;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+    .vbar .fill{height:100%;border-radius:999px}
+    .good .fill{background:var(--good)} .warn .fill{background:var(--warn)} .bad .fill{background:var(--bad)}
+
+    /* Loader */
+    .stepper{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-bottom:14px}
+    .step{display:flex;align-items:center;gap:7px}
+    .step .dot{width:9px;height:9px;border-radius:50%;background:var(--good)}
+    .step.run .dot{background:var(--brand);animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .skel{height:12px;border-radius:6px;background:linear-gradient(90deg,#eef2f7 25%,#e2e8f1 37%,#eef2f7 63%);background-size:400% 100%;animation:sh 1.3s infinite;margin:9px 0}
+    @keyframes sh{0%{background-position:100% 0}100%{background-position:0 0}}
+
+    .notice{border-left:4px solid var(--brand);padding:12px 14px;background:#fbfcfe;border-radius:8px}
+    .notice.err{border-left-color:var(--bad);background:var(--bad-bg);color:#7d2417}
+    footer{text-align:center;color:var(--muted);font-size:.78rem;padding:6px 20px 30px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hwrap">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div><h1>Ассистент цифровой трансформации</h1><p>Анализ компании и идей проектов на основе RAG</p></div>
+      </div>
+      <div class="stackpills"><span class="pill">RAG</span><span class="pill">GigaChat</span><span class="pill">Qdrant</span><span class="pill">LangGraph</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-title">▸ Параметры анализа</div>
+      <label for="inn">ИНН компании</label>
+      <input id="inn" placeholder="Например, 7733510051" autocomplete="off" inputmode="numeric" />
+      <label for="idea">Идея проекта <span class="muted" style="font-weight:400">— необязательно. Если заполнено, выполняется строгий анализ идеи (Режим 2)</span></label>
+      <textarea id="idea" placeholder="Опишите идею проекта, чтобы оценить её применимость для этой компании…"></textarea>
+      <div class="row">
+        <button class="cta" id="go">Провести анализ</button>
+        <span class="muted" id="modehint" style="font-size:.82rem">Режим 1: боли и проекты трансформации</span>
+      </div>
+      <div class="examples">
+        <div class="lbl">Компании в базе знаний:</div>
+        <div class="chips" id="chips"><span class="muted" style="font-size:.8rem">загрузка…</span></div>
+      </div>
+    </section>
+    <div id="out"></div>
+  </main>
+
+  <footer>Прототип</footer>
+
+<script>
+const $=(id)=>document.getElementById(id);
+const out=$("out");
+function esc(s){return (s==null?"":String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function cap(s){s=(s==null?"":String(s)).trim();return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+function ul(arr,cls){return (arr&&arr.length)?`<ul class="clean ${cls||''}">`+arr.map(x=>`<li>${cap(esc(x))}</li>`).join('')+'</ul>':'<p class="muted">—</p>';}
+function panelNotice(isErr,msg){return `<div class="panel"><div class="notice ${isErr?'err':''}">${esc(msg)}</div></div>`;}
+
+const VERDICT={
+  "реализовать":{cls:"good",label:"Рекомендуется к реализации"},
+  "доработать":{cls:"warn",label:"Требует доработки"},
+  "отказаться":{cls:"bad",label:"Не рекомендуется"}
+};
+
+function renderCompany(c,cases){
+  const facts=(c.facts||[]).map(f=>`<div class="fact"><div class="fk">${esc(f.label)}</div><div class="fv">${esc(f.value)}</div></div>`).join('');
+  const services=(c.services||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join('');
+  const clients=(c.clients||[]).map(s=>`<span class="tag alt">${esc(s)}</span>`).join('');
+  const src=(cases||[]).filter(Boolean).map(t=>`<span class="src">${esc(t)}</span>`).join('');
+  const intro=c.summary?esc(c.summary):(c.description?esc(c.description):'');
+  return `<section class="panel dossier">
+    <div class="panel-title">▸ Компания</div>
+    <h2>${esc(c.name)}</h2>
+    <div class="meta">${esc(c.full_name||'')} · ИНН ${esc(c.inn)}</div>
+    <div class="tagrow"><span class="tag brand">${esc(c.industry)}</span></div>
+    ${intro?`<p class="desc">${intro}</p>`:''}
+    ${facts?`<div class="facts">${facts}</div>`:''}
+    ${services?`<div class="block"><div class="sec-h">Услуги и направления</div><div class="tags">${services}</div></div>`:''}
+    ${clients?`<div class="block"><div class="sec-h">Среди клиентов</div><div class="tags">${clients}</div></div>`:''}
+    ${src?`<div class="sources"><div class="lbl">Контекст из базы знаний (RAG)</div>${src}</div>`:''}
+  </section>`;
+}
+
+function renderMode1(r){
+  const projects=(r.projects||[]).map((p,i)=>`<div class="project">
+    <div class="pnum">${i+1}</div>
+    <div class="pbody">
+      <div class="proj-title">${cap(esc(p.title))}</div>
+      <p style="margin:.4rem 0 0">${cap(esc(p.essence))}</p>
+      <span class="closes">Закрывает боль: ${cap(esc(p.pain_addressed))}</span>
+      <div class="sec-h" style="margin-top:12px">Шаги внедрения</div>
+      <ol class="steps">${(p.steps||[]).map(s=>`<li>${cap(esc(s))}</li>`).join('')}</ol>
+      <div class="effect"><b>Ожидаемый эффект:</b> ${cap(esc(p.expected_effect))}</div>
+    </div></div>`).join('');
+  return `<section class="panel"><div class="panel-title">▸ Боли компании</div>${ul(r.pains,'pain')}</section>
+    <section class="panel"><div class="panel-title">▸ Проекты цифровой трансформации</div>${projects||'<p class="muted">—</p>'}</section>`;
+}
+
+function renderMode2(r){
+  const v=r.verdict||{}; const meta=VERDICT[v.recommendation]||{cls:"warn",label:cap(v.recommendation||"")};
+  const sc=Math.max(0,Math.min(10,Number(v.score)||0)); const re=r.realism||{};
+  return `<section class="panel"><div class="panel-title">▸ Итоговая оценка идеи</div>
+    <div class="verdict ${meta.cls}"><span class="vbadge">${meta.label}</span><div class="vscore">${sc}<small>/10</small></div><div class="vbar"><div class="track"><div class="fill" style="width:${sc*10}%"></div></div></div></div>
+    <p style="margin:14px 0 0">${cap(esc(v.rationale))}</p></section>
+    <section class="panel"><div class="panel-title">▸ Актуальность для компании</div><p style="margin:0">${cap(esc(r.relevance))}</p></section>
+    <section class="panel"><div class="panel-title">▸ Влияние на боли</div>
+      <div class="grid2"><div class="subcard g"><div class="sec-h" style="color:var(--good)">✓ Закрывает</div>${ul(r.pains_addressed,'good')}</div>
+      <div class="subcard b"><div class="sec-h" style="color:var(--bad)">✕ Не закрывает</div>${ul(r.pains_not_addressed,'bad')}</div></div></section>
+    <section class="panel"><div class="panel-title">▸ Реалистичность внедрения</div>
+      <div class="grid3"><div class="subcard"><div class="sec-h">Риски</div>${ul(re.risks)}</div>
+      <div class="subcard"><div class="sec-h">Ограничения</div>${ul(re.constraints)}</div>
+      <div class="subcard"><div class="sec-h">Зависимости</div>${ul(re.dependencies)}</div></div></section>
+    <section class="panel"><div class="panel-title">▸ Как усилить или доработать</div>${ul(r.improvements)}</section>`;
+}
+
+function analysisLoader(mode){
+  const title=mode===2?"Анализ идеи":"Рекомендации";
+  return `<section class="panel"><div class="panel-title">▸ ${title}</div>
+    <div class="stepper">
+      <div class="step"><span class="dot"></span>Компания найдена</div>
+      <div class="step"><span class="dot"></span>Контекст подобран</div>
+      <div class="step run"><span class="dot"></span>GigaChat анализирует…</div>
+    </div>
+    <div class="skel" style="width:70%"></div><div class="skel" style="width:92%"></div>
+    <div class="skel" style="width:84%"></div><div class="skel" style="width:60%"></div></section>`;
+}
+
+async function analyze(){
+  const inn=$("inn").value.trim(), idea=$("idea").value.trim();
+  if(!inn){ out.innerHTML=panelNotice(true,"Введите ИНН компании."); return; }
+  const mode=idea?2:1;
+  $("go").disabled=true;
+  try{
+    // Шаг 1 — мгновенное досье (без LLM)
+    let companyHtml="";
+    try{
+      const cr=await fetch(`/api/company/${encodeURIComponent(inn)}`);
+      const cd=await cr.json();
+      if(!cr.ok){ out.innerHTML=panelNotice(true,cd.detail||"Ошибка запроса"); return; }
+      if(!cd.found){ out.innerHTML=panelNotice(false,cd.message); return; }
+      companyHtml=renderCompany(cd.company,[]);
+    }catch(_){ /* если быстрый lookup недоступен — продолжаем, компания придёт из /analyze */ }
+    out.innerHTML=companyHtml+analysisLoader(mode);
+
+    // Шаг 2 — полный анализ (LLM)
+    const resp=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({inn,idea:idea||null})});
+    const data=await resp.json();
+    if(!resp.ok){ out.innerHTML=companyHtml+panelNotice(true,data.detail||"Ошибка запроса"); return; }
+    if(!data.found){ out.innerHTML=panelNotice(false,data.message); return; }
+    const analysis=(data.mode===2&&data.mode2)?renderMode2(data.mode2):renderMode1(data.mode1||{});
+    out.innerHTML=renderCompany(data.company,data.retrieved_cases)+analysis;
+  }catch(e){
+    out.innerHTML=panelNotice(true,"Сервер недоступен: "+e.message);
+  }finally{
+    $("go").disabled=false;
+    out.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
+async function loadChips(){
+  try{
+    const d=await (await fetch("/api/companies")).json();
+    const items=d.companies||[];
+    if(!items.length){ $("chips").innerHTML='<span class="muted" style="font-size:.8rem">база не заполнена — выполните seed.py</span>'; return; }
+    $("chips").innerHTML=items.map(c=>`<span class="chip" data-inn="${esc(c.inn)}"><b>${esc(c.name)}</b> <span>· ${esc(c.industry)}</span></span>`).join('');
+    document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{$("inn").value=ch.dataset.inn;$("inn").focus();}));
+  }catch(e){ $("chips").innerHTML='<span class="muted" style="font-size:.8rem">список недоступен</span>'; }
+}
+
+$("go").addEventListener("click",analyze);
+$("inn").addEventListener("keydown",e=>{if(e.key==="Enter")analyze();});
+$("idea").addEventListener("input",()=>{$("modehint").textContent=$("idea").value.trim()?"Режим 2: строгий анализ идеи":"Режим 1: боли и проекты трансформации";});
+loadChips();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile (syntax check)
+        run: python -m py_compile app/*.py seed.py eval/*.py
+
+      - name: Validate knowledge base JSON
+        run: |
+          python -c "import json; \
+          c=json.load(open('data/companies.json',encoding='utf-8')); \
+          k=json.load(open('data/knowledge/cases.json',encoding='utf-8')); \
+          assert len(c)>=5 and len(k)>=1; \
+          print(f'OK: {len(c)} companies, {len(k)} cases')"
+
+      - name: Run eval (offline checks; integration auto-skips without creds)
+        run: python -m eval.test_cases
