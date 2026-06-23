@@ -26,7 +26,7 @@ def get_chat_model() -> GigaChat:
         verify_ssl_certs=s.gigachat_verify_ssl,
         profanity_check=False,   # анализ бизнес-идей не должен цензуриться
         timeout=90,
-        temperature=0.3,         # стабильный, но не «деревянный» анализ
+        temperature=0.6,         # выше — для разнообразия и небанальных идей
         max_tokens=2048,
     )
 
